@@ -222,6 +222,8 @@
   .chat-header-status { font-size:12px; opacity:0.8; display:flex; align-items:center; gap:4px; }
   .status-dot { width:7px; height:7px; background:#7dffb3; border-radius:50%; animation:blink 1.5s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .cursor-blink { animation: blink 0.8s step-end infinite; color: var(--primary); font-weight: 300; }
+  .streaming-bubble { min-height: 20px; }
   .chat-close { background:rgba(255,255,255,0.2); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; }
   .chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; background:#f8faf9; }
   .chat-messages::-webkit-scrollbar { width:4px; }
@@ -876,6 +878,12 @@ const aiResponses = {
 
 let chatOpen = false;
 let chatInitialized = false;
+let cozeConversationId = '';
+
+// Coze Bot 配置
+const COZE_API = 'https://api.coze.cn/v3/chat';
+const COZE_BOT_ID = '7631002850562228270';
+const COZE_PAT = 'pat_IR1rTAm8Sf78HPaAKLAE2hecTStBh22M4FPT4w5kDX94wY7ihR2edsr9plh5Ewb8';
 
 function toggleChat() {
   chatOpen = !chatOpen;
@@ -891,7 +899,8 @@ function openChat() {
 function initChat() {
   const msgs = document.getElementById('chatMessages');
   msgs.innerHTML = '';
-  setTimeout(() => addBotMsg(aiResponses.default[0].text, aiResponses.default[0].quick), 300);
+  cozeConversationId = '';
+  setTimeout(() => addBotMsg('您好！我是澳云旅游 AI 智能旅行顾问 🌏\n\n我可以帮您：\n📋 规划澳洲旅行行程\n✈️ 查询机票信息\n🏨 推荐酒店住宿\n🍽️ 推荐当地美食\n🎟️ 购买景点门票\n\n请问有什么可以帮您的？', ['帮我规划行程', '推荐景点', '推荐美食', '预订帮助']), 300);
 }
 
 function addBotMsg(text, quickReplies) {
@@ -945,45 +954,154 @@ function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(e
 
 function processUserMessage(text) {
   addUserMsg(text);
-  const typing = addTyping();
-  const delay = 800 + Math.random() * 600;
-  setTimeout(() => { removeTyping(); generateAIResponse(text); }, delay);
+  addTyping();
+  callCozeAPI(text);
 }
 
-function generateAIResponse(userText) {
-  const t = userText.toLowerCase();
-  if(t.includes('悉尼') && (t.includes('行程') || t.includes('天') || t.includes('规划') || t.includes('去'))) {
-    addBotMsg('太棒了！我为您规划了 **悉尼7天精华行程** 🗺️\n\n根据您的需求，我推荐以下行程概览：', null);
-    setTimeout(() => {
-      addItineraryCard('悉尼');
-      setTimeout(() => addBotMsg('这只是行程预览！您还需要我帮您：\n\n✈️ 查询合适的机票\n🏨 推荐优质酒店\n🚗 安排接送用车\n🎟️ 预购景点门票', ['查询机票', '推荐酒店', '安排用车', '购买门票']), 600);
-    }, 400);
-  } else if(t.includes('黄金海岸') || t.includes('孩子') || t.includes('亲子')) {
-    addBotMsg('黄金海岸是亲子旅行的绝佳选择！🎡\n\n这里有**5大主题乐园**，让小朋友玩到不想回家！我来帮您规划专属亲子行程：', null);
-    setTimeout(() => { addItineraryCard('黄金海岸'); }, 400);
-  } else if(t.includes('大堡礁') || t.includes('潜水')) {
-    addBotMsg('大堡礁是地球上最美的自然奇观之一！🤿\n\n**凯恩斯+大堡礁 4日精华游**：\n\n🤿 **Day1**: 抵达凯恩斯，市区游览\n🐠 **Day2**: 大堡礁一日游（浮潜/潜水/玻璃船）\n🌿 **Day3**: 库兰达热带雨林，观光小火车\n🏃 **Day4**: 棕榈湾白沙滩，自由活动，下午返程\n\n**人均费用约：¥6,500-8,000**（含机票酒店）', ['查询机票', '预订大堡礁门票', '推荐当地美食', '了解更多行程']);
-  } else if(t.includes('机票')) {
-    addBotMsg('好的！帮您查询近期优质机票 ✈️\n\n**北京→悉尼 参考票价**：\n🟢 东方航空 | 经济舱 | **¥3,280起**\n🟢 国际航空 | 经济舱 | **¥3,580起**\n🔵 国航 | 商务舱 | **¥12,800起**\n\n💡 提示：提前45天购票可节省约30%\n\n请告诉我您的出发城市和大概日期，我给您搜索最优价格！', ['出发城市：北京', '出发城市：上海', '出发城市：广州', '我要商务舱']);
-  } else if(t.includes('酒店')) {
-    addBotMsg('为您推荐悉尼热门酒店 🏨\n\n⭐⭐⭐⭐⭐ **四季酒店**\n📍 市中心，步行至歌剧院\n💰 约 AUD 380/晚\n\n⭐⭐⭐⭐⭐ **柏悦酒店**\n📍 迪令赫斯特，精品设计\n💰 约 AUD 290/晚\n\n⭐⭐⭐⭐ **悉尼公园假日酒店**\n📍 近中央火车站，交通便利\n💰 约 AUD 150/晚\n\n需要我帮您查询具体日期的可用房间吗？', ['查看四季酒店', '查看柏悦酒店', '帮我预订酒店']);
-  } else if(t.includes('美食') || t.includes('吃什么') || t.includes('好吃')) {
-    addBotMsg('澳洲美食超级丰富！🍽️ 我来给您划重点：\n\n🦞 **必吃海鲜**：悉尼岩石区生蚝、凯恩斯龙虾\n🥩 **必吃牛排**：墨尔本干式熟成牛排\n☕ **必喝咖啡**：墨尔本精品flat white\n🎂 **必吃甜点**：澳式Pavlova蛋白霜蛋糕\n🥧 **必吃小吃**：澳洲肉馅派\n\n👆 页面上方有详细的美食地图，点击即可查看！', ['悉尼美食推荐', '墨尔本必吃清单', '有没有中餐推荐', '素食友好餐厅']);
-  } else if(t.includes('中餐') || t.includes('中国菜')) {
-    addBotMsg('在澳洲想念中餐完全不用担心！🥢\n\n**悉尼唐人街**（Dixon Street）：\n🍜 正宗粤式早茶、港式烧腊\n🥟 上海小笼包、四川火锅\n\n**墨尔本Box Hill**：\n🍱 最正宗的华人聚居区\n🍲 东南亚+中式融合菜\n\n推荐餐厅：帝苑楼（悉尼）、荣华楼（墨尔本）', ['返回看其他美食', '规划行程']);
-  } else if(t.includes('用车') || t.includes('接机') || t.includes('司机')) {
-    addBotMsg('澳云旅游为您提供专业用车服务 🚗\n\n**服务类型**：\n• 机场接送（悉尼/墨尔本/黄金海岸等）\n• 半日/全日包车游览\n• 多日长途包车\n\n**车型选择**：\n🚗 标准轿车（1-3人）AUD 80起\n🚐 商务MPV（4-7人）AUD 120起\n🚌 豪华大巴（8-13人）AUD 200起\n\n全部配备中文司导，熟悉当地路况！需要预订吗？', ['预订机场接机', '预订包车游览', '了解价格详情']);
-  } else if(t.includes('门票') || t.includes('景点')) {
-    addBotMsg('澳洲热门景点门票推荐 🎟️\n\n🎭 悉尼歌剧院导览 | AUD 29起\n🦘 塔龙加动物园 | AUD 47起\n🤿 大堡礁潜水体验 | AUD 199起\n🎡 黄金海岸梦幻世界 | AUD 109起\n🚂 库兰达观光小火车 | AUD 58起\n🐧 菲利普岛企鹅归巢 | AUD 35起\n\n💡 提前在线购票可节省10-30%！\n需要帮您加入行程并预购吗？', ['加入悉尼歌剧院', '加入大堡礁', '查看全部门票', '一键打包购买']);
-  } else if(t.includes('价格') || t.includes('多少钱') || t.includes('费用')) {
-    addBotMsg('澳洲旅游费用参考（含机票+酒店+地接）💰\n\n📅 **5天4晚**：约 **¥7,000-10,000/人**\n📅 **7天6晚**：约 **¥10,000-14,000/人**\n📅 **10天9晚**：约 **¥14,000-20,000/人**\n\n价格因旅行时间、人数、酒店档次而异。\n**学生/儿童**享受额外折扣！\n\n请告诉我您的具体需求，我给您精确报价 😊', ['获取定制报价', '有没有特价线路', '团队出行优惠']);
-  } else {
-    const responses = [
-      { text: '感谢您的咨询！🙏\n\n作为您的专属AI旅行顾问，我可以帮您：\n\n📋 **定制个性化行程** - 告诉我您的偏好\n✈️ **搜索最优机票** - 全网比价\n🏨 **推荐精品酒店** - 按需匹配\n🎟️ **购买景点门票** - 提前预约节省时间\n🍽️ **推荐当地美食** - 避坑必备\n\n请告诉我您想去哪里，玩几天，我来帮您规划！', quick: ['我想去悉尼', '我想去黄金海岸', '我想去大堡礁', '帮我规划10天行程'] },
-    ];
-    const r = responses[Math.floor(Math.random()*responses.length)];
-    addBotMsg(r.text, r.quick);
+async function callCozeAPI(userText) {
+  try {
+    const body = {
+      bot_id: COZE_BOT_ID,
+      user_id: 'web_user_' + Date.now(),
+      stream: true,
+      auto_save_history: true,
+      additional_messages: [
+        {
+          role: 'user',
+          content: userText,
+          content_type: 'text'
+        }
+      ]
+    };
+    if (cozeConversationId) {
+      body.conversation_id = cozeConversationId;
+    }
+
+    const resp = await fetch(COZE_API, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + COZE_PAT,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!resp.ok) {
+      removeTyping();
+      addBotMsg('抱歉，连接出了点问题，请稍后再试 😅', null);
+      return;
+    }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullAnswer = '';
+    let msgEl = null;
+    let isStreaming = false;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (!line.startsWith('event:') && !line.startsWith('data:')) continue;
+
+        if (line.startsWith('event:')) {
+          const event = line.slice(6).trim();
+          if (event === 'conversation.chat.created') {
+            // 获取 conversation_id
+          } else if (event === 'conversation.message.delta') {
+            // 流式消息增量
+          } else if (event === 'conversation.message.completed') {
+            // 消息完成
+          } else if (event === 'conversation.chat.completed') {
+            // 对话完成
+          } else if (event === 'done') {
+            // 流结束
+          }
+          continue;
+        }
+
+        if (line.startsWith('data:')) {
+          const jsonStr = line.slice(5).trim();
+          if (!jsonStr) continue;
+          try {
+            const data = JSON.parse(jsonStr);
+
+            // 保存 conversation_id
+            if (data.conversation_id) {
+              cozeConversationId = data.conversation_id;
+            }
+
+            // 处理消息增量
+            if (data.type === 'answer' && data.content) {
+              removeTyping();
+              if (!isStreaming) {
+                msgEl = createStreamingMsg();
+                isStreaming = true;
+              }
+              fullAnswer += data.content;
+              updateStreamingMsg(msgEl, fullAnswer);
+            }
+
+            // 处理完整消息
+            if (data.type === 'verbose_log') continue;
+            if (data.type === 'follow_up') continue;
+
+          } catch(e) {
+            // 非 JSON 行，忽略
+          }
+        }
+      }
+    }
+
+    // 流结束，如果没收到任何内容则提示
+    if (!fullAnswer) {
+      removeTyping();
+      addBotMsg('抱歉，暂时无法回复，请稍后再试 😅', null);
+    } else if (msgEl) {
+      finalizeStreamingMsg(msgEl, fullAnswer);
+    }
+  } catch (err) {
+    removeTyping();
+    addBotMsg('网络连接失败，请检查网络后重试 😅', null);
   }
+}
+
+function createStreamingMsg() {
+  const msgs = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = 'msg';
+  el.innerHTML = '<div class="msg-avatar">🤖</div><div><div class="msg-bubble streaming-bubble"><span class="stream-text"></span><span class="cursor-blink">|</span></div></div>';
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  return el.querySelector('.stream-text');
+}
+
+function updateStreamingMsg(span, text) {
+  const formatted = formatMarkdown(text);
+  span.innerHTML = formatted;
+  const msgs = document.getElementById('chatMessages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function finalizeStreamingMsg(span, text) {
+  const formatted = formatMarkdown(text);
+  const cursor = span.parentElement.querySelector('.cursor-blink');
+  if (cursor) cursor.remove();
+  span.innerHTML = formatted;
+}
+
+function formatMarkdown(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:13px">$1</code>')
+    .replace(/\n/g, '<br>');
 }
 
 function addItineraryCard(city) {
