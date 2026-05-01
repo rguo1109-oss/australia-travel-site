@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>澳云旅游 Aucloud Travel · 澳洲地接旅游</title>
+<style>
+  :root {
+    --primary: #00A86B;
+    --primary-dark: #007A4D;
+    --secondary: #FF6B35;
+    --accent: #FFD700;
+    --dark: #1A1A2E;
+    --text: #333;
+    --light-bg: #F8FAF9;
+    --white: #fff;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --radius: 16px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; color: var(--text); background: var(--white); overflow-x:hidden; }
+
+  /* ===== NAVBAR ===== */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:1000;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 40px; height:70px;
+  }
+  .logo { display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .logo-icon { width:40px; height:40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .logo-text { font-size:20px; font-weight:700; color:var(--dark); }
+  .logo-text span { color:var(--primary); }
+  .nav-links { display:flex; gap:30px; list-style:none; }
+  .nav-links a { text-decoration:none; color:var(--text); font-size:15px; font-weight:500; transition:color .3s; cursor:pointer; }
+  .nav-links a:hover, .nav-links a.active { color:var(--primary); }
+  .nav-btn { background: var(--primary); color:#fff; border:none; padding:10px 24px; border-radius:25px; cursor:pointer; font-size:14px; font-weight:600; transition:all .3s; }
+  .nav-btn:hover { background:var(--primary-dark); transform:translateY(-1px); }
+
+  /* ===== HERO ===== */
+  #hero {
+    min-height:100vh; position:relative; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg, #0a4a2f 0%, #1a6b3e 40%, #0d5533 70%, #073d22 100%);
+    overflow:hidden;
+  }
+  .hero-bg {
+    position:absolute; inset:0;
+    background: url('https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=1600&q=80') center/cover no-repeat;
+    opacity:0.3;
+  }
+  .hero-overlay { position:absolute; inset:0; background: linear-gradient(to bottom, rgba(10,40,20,0.6) 0%, rgba(10,40,20,0.4) 50%, rgba(10,40,20,0.8) 100%); }
+  .hero-content { position:relative; z-index:2; text-align:center; color:#fff; padding:0 20px; max-width:900px; }
+  .hero-badge { display:inline-block; background:rgba(255,215,0,0.2); border:1px solid rgba(255,215,0,0.5); color:var(--accent); padding:6px 18px; border-radius:20px; font-size:13px; margin-bottom:20px; }
+  .hero-title { font-size:clamp(36px,6vw,72px); font-weight:900; line-height:1.1; margin-bottom:20px; text-shadow:0 2px 20px rgba(0,0,0,0.3); }
+  .hero-title .highlight { color:var(--accent); }
+  .hero-subtitle { font-size:clamp(16px,2vw,20px); opacity:0.9; margin-bottom:40px; line-height:1.7; }
+  .hero-search {
+    background:rgba(255,255,255,0.95); border-radius:60px; padding:8px 8px 8px 30px;
+    display:flex; align-items:center; gap:10px; max-width:680px; margin:0 auto 40px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .hero-search input { flex:1; border:none; outline:none; font-size:16px; color:var(--dark); background:transparent; }
+  .hero-search select { border:none; outline:none; font-size:14px; color:#666; background:transparent; padding:0 10px; border-left:1px solid #e0e0e0; height:40px; }
+  .hero-search-btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color:#fff; border:none; padding:14px 28px; border-radius:50px; cursor:pointer; font-size:15px; font-weight:600; white-space:nowrap; transition:all .3s; }
+  .hero-search-btn:hover { transform:scale(1.05); box-shadow:0 4px 15px rgba(0,168,107,0.5); }
+  .hero-stats { display:flex; gap:40px; justify-content:center; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat-num { font-size:28px; font-weight:800; color:var(--accent); }
+  .stat-label { font-size:13px; opacity:0.8; margin-top:4px; }
+
+  /* ===== FLOATING ELEMENTS ===== */
+  .floating-card {
+    position:absolute; background:rgba(255,255,255,0.95); border-radius:12px; padding:14px 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index:3; animation: float 3s ease-in-out infinite;
+    display:flex; align-items:center; gap:10px;
+  }
+  .floating-card.card1 { top:20%; left:5%; }
+  .floating-card.card2 { bottom:20%; right:5%; animation-delay:1.5s; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .fc-icon { font-size:24px; }
+  .fc-text { font-size:13px; color:var(--dark); }
+  .fc-sub { font-size:11px; color:#888; }
+
+  /* ===== SECTION COMMON ===== */
+  section { padding:80px 40px; }
+  .section-header { text-align:center; margin-bottom:50px; }
+  .section-tag { display:inline-block; background: linear-gradient(135deg, rgba(0,168,107,0.1), rgba(0,168,107,0.2)); color:var(--primary); padding:6px 18px; border-radius:20px; font-size:13px; font-weight:600; margin-bottom:12px; }
+  .section-title { font-size:clamp(24px,4vw,40px); font-weight:800; color:var(--dark); margin-bottom:12px; }
+  .section-desc { color:#666; font-size:16px; max-width:600px; margin:0 auto; line-height:1.7; }
+  .container { max-width:1200px; margin:0 auto; }
+
+  /* ===== DESTINATIONS ===== */
+  #destinations { background: var(--light-bg); }
+  .dest-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .dest-card {
+    border-radius:var(--radius); overflow:hidden; cursor:pointer; position:relative;
+    box-shadow:var(--shadow); transition:transform .3s, box-shadow .3s; background:#fff;
+  }
+  .dest-card:hover { transform:translateY(-8px); box-shadow:0 12px 40px rgba(0,0,0,0.15); }
+  .dest-card.featured { grid-column:span 2; grid-row:span 2; }
+  .dest-img { width:100%; height:220px; object-fit:cover; }
+  .dest-card.featured .dest-img { height:460px; }
+  .dest-overlay {
+    position:absolute; bottom:0; left:0; right:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding:20px; color:#fff;
+  }
+  .dest-name { font-size:20px; font-weight:700; margin-bottom:4px; }
+  .dest-card.featured .dest-name { font-size:28px; }
+  .dest-info { font-size:13px; opacity:0.8; display:flex; align-items:center; gap:6px; }
+  .dest-tag { background:rgba(255,215,0,0.3); border:1px solid rgba(255,215,0,0.6); color:var(--accent); padding:3px 10px; border-radius:12px; font-size:11px; margin-right:6px; }
+
+  /* ===== PACKAGES ===== */
+  .pkg-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:24px; }
+  .pkg-card {
+    background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+    transition:transform .3s; cursor:pointer; border:1px solid #f0f0f0;
+  }
+  .pkg-card:hover { transform:translateY(-6px); }
+  .pkg-card:hover .pkg-btn { background:var(--primary-dark); }
+  .pkg-img { width:100%; height:200px; object-fit:cover; position:relative; }
+  .pkg-badge {
+    position:absolute; top:14px; left:14px;
+    background: linear-gradient(135deg, var(--secondary), #e55a2b); color:#fff;
+    padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600;
+  }
+  .pkg-body { padding:20px; }
+  .pkg-title { font-size:17px; font-weight:700; color:var(--dark); margin-bottom:8px; }
+  .pkg-meta { display:flex; gap:16px; margin-bottom:12px; flex-wrap:wrap; }
+  .pkg-meta-item { display:flex; align-items:center; gap:4px; font-size:13px; color:#666; }
+  .pkg-desc { font-size:14px; color:#888; line-height:1.6; margin-bottom:16px; }
+  .pkg-footer { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-top:1px solid #f0f0f0; }
+  .pkg-price { }
+  .pkg-price-old { font-size:13px; color:#aaa; text-decoration:line-through; }
+  .pkg-price-new { font-size:22px; font-weight:800; color:var(--secondary); }
+  .pkg-price-new span { font-size:13px; font-weight:400; }
+  .pkg-btn { background:var(--primary); color:#fff; border:none; padding:10px 20px; border-radius:20px; cursor:pointer; font-size:14px; font-weight:600; transition:all .3s; }
+
+  /* ===== SERVICES ===== */
+  #services { background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%); }
+  #services .section-title { color:#fff; }
+  #services .section-desc { color:rgba(255,255,255,0.6); }
+  .service-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:20px; }
+  .service-card {
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
+    border-radius:var(--radius); padding:30px 24px; cursor:pointer; transition:all .3s;
+    text-align:center;
+  }
+  .service-card:hover { background:rgba(255,255,255,0.12); transform:translateY(-6px); border-color:rgba(0,168,107,0.5); }
+  .service-icon { font-size:44px; margin-bottom:16px; display:block; }
+  .service-name { font-size:18px; font-weight:700; color:#fff; margin-bottom:8px; }
+  .service-desc { font-size:14px; color:rgba(255,255,255,0.6); line-height:1.6; }
+  .service-action { margin-top:16px; color:var(--primary); font-size:13px; font-weight:600; cursor:pointer; }
+
+  /* ===== FOOD ===== */
+  #food { background:var(--light-bg); }
+  .food-categories { display:flex; gap:12px; justify-content:center; margin-bottom:30px; flex-wrap:wrap; }
+  .food-cat-btn {
+    padding:8px 20px; border-radius:25px; border:2px solid #e0e0e0; background:#fff;
+    cursor:pointer; font-size:14px; font-weight:500; transition:all .3s; color:#666;
+  }
+  .food-cat-btn.active, .food-cat-btn:hover { border-color:var(--primary); color:var(--primary); background:rgba(0,168,107,0.05); }
+  .food-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; }
+  .food-card {
+    background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+    cursor:pointer; transition:transform .3s;
+  }
+  .food-card:hover { transform:translateY(-5px); }
+  .food-img { width:100%; height:180px; object-fit:cover; }
+  .food-body { padding:16px; }
+  .food-name { font-size:16px; font-weight:700; margin-bottom:6px; color:var(--dark); }
+  .food-desc { font-size:13px; color:#888; line-height:1.5; margin-bottom:10px; }
+  .food-footer { display:flex; align-items:center; justify-content:space-between; }
+  .food-rating { display:flex; align-items:center; gap:4px; font-size:13px; color:var(--secondary); font-weight:600; }
+  .food-price { font-size:14px; color:var(--primary); font-weight:700; }
+
+  /* ===== BOOKING SECTION ===== */
+  #booking { background:#fff; }
+  .booking-tabs { display:flex; gap:0; justify-content:center; margin-bottom:40px; background:#f5f5f5; border-radius:12px; padding:6px; width:fit-content; margin-left:auto; margin-right:auto; }
+  .booking-tab { padding:12px 28px; border-radius:8px; cursor:pointer; font-size:15px; font-weight:500; color:#666; transition:all .3s; border:none; background:transparent; }
+  .booking-tab.active { background:#fff; color:var(--primary); font-weight:700; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+  .booking-panel { display:none; animation: fadeIn .3s ease; }
+  .booking-panel.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .booking-form { background: var(--light-bg); border-radius:var(--radius); padding:30px; }
+  .form-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:20px; }
+  .form-group label { display:block; font-size:13px; font-weight:600; color:#555; margin-bottom:6px; }
+  .form-group input, .form-group select { width:100%; padding:12px 16px; border:1px solid #e0e0e0; border-radius:10px; font-size:15px; outline:none; transition:border .3s; background:#fff; }
+  .form-group input:focus, .form-group select:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(0,168,107,0.1); }
+  .search-btn-large { width:100%; padding:16px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color:#fff; border:none; border-radius:12px; font-size:17px; font-weight:700; cursor:pointer; transition:all .3s; margin-top:10px; }
+  .search-btn-large:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,168,107,0.4); }
+
+  /* ===== AI CHAT ===== */
+  .ai-chat-btn {
+    position:fixed; bottom:30px; right:30px; z-index:9999;
+    width:64px; height:64px; border-radius:50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border:none; cursor:pointer; box-shadow:0 4px 20px rgba(0,168,107,0.5);
+    display:flex; align-items:center; justify-content:center; font-size:28px;
+    transition:all .3s; animation: pulse 2s ease-in-out infinite;
+  }
+  .ai-chat-btn:hover { transform:scale(1.1); }
+  @keyframes pulse { 0%,100%{box-shadow:0 4px 20px rgba(0,168,107,0.5)} 50%{box-shadow:0 4px 35px rgba(0,168,107,0.8), 0 0 0 8px rgba(0,168,107,0.1)} }
+  .ai-chat-badge { position:absolute; top:-2px; right:-2px; width:18px; height:18px; background:var(--secondary); border-radius:50%; border:2px solid #fff; font-size:10px; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
+
+  /* ===== CHAT WINDOW ===== */
+  .chat-window {
+    position:fixed; bottom:110px; right:30px; z-index:9998;
+    width:420px; height:600px; background:#fff; border-radius:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.2); display:none; flex-direction:column;
+    overflow:hidden; border:1px solid rgba(0,168,107,0.2);
+  }
+  .chat-window.open { display:flex; animation: slideUp .3s ease; }
+  @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .chat-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    padding:16px 20px; display:flex; align-items:center; gap:12px; color:#fff;
+  }
+  .chat-avatar { width:42px; height:42px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .chat-header-info { flex:1; }
+  .chat-header-name { font-size:16px; font-weight:700; }
+  .chat-header-status { font-size:12px; opacity:0.8; display:flex; align-items:center; gap:4px; }
+  .status-dot { width:7px; height:7px; background:#7dffb3; border-radius:50%; animation:blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .chat-close { background:rgba(255,255,255,0.2); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; }
+  .chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; background:#f8faf9; }
+  .chat-messages::-webkit-scrollbar { width:4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background:#ccc; border-radius:2px; }
+  .msg { display:flex; gap:8px; animation: msgIn .3s ease; }
+  @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg.user { flex-direction:row-reverse; }
+  .msg-avatar { width:32px; height:32px; border-radius:50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .msg.user .msg-avatar { background: linear-gradient(135deg, #667eea, #764ba2); }
+  .msg-bubble {
+    max-width:75%; padding:12px 16px; border-radius:16px; font-size:14px; line-height:1.6;
+    background:#fff; box-shadow:0 1px 5px rgba(0,0,0,0.08); color:var(--dark);
+  }
+  .msg.user .msg-bubble { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color:#fff; }
+  .quick-replies { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .quick-reply { background:#fff; border:1px solid #e0e0e0; color:var(--primary); padding:6px 12px; border-radius:14px; font-size:12px; cursor:pointer; transition:all .3s; }
+  .quick-reply:hover { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .itinerary-card {
+    background:linear-gradient(135deg, rgba(0,168,107,0.05), rgba(0,168,107,0.1));
+    border:1px solid rgba(0,168,107,0.2); border-radius:12px; padding:14px; margin-top:8px;
+  }
+  .itinerary-day { font-weight:700; color:var(--primary); font-size:13px; margin-bottom:6px; }
+  .itinerary-item { display:flex; gap:8px; align-items:flex-start; margin-bottom:6px; font-size:13px; color:#555; }
+  .chat-input-area { padding:12px 16px; background:#fff; border-top:1px solid #f0f0f0; }
+  .chat-input-row { display:flex; gap:8px; align-items:center; }
+  .chat-input { flex:1; border:1px solid #e0e0e0; border-radius:20px; padding:10px 16px; font-size:14px; outline:none; transition:border .3s; resize:none; max-height:80px; overflow-y:auto; }
+  .chat-input:focus { border-color:var(--primary); }
+  .chat-send-btn { background:var(--primary); color:#fff; border:none; width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .3s; }
+  .chat-send-btn:hover { background:var(--primary-dark); transform:scale(1.1); }
+  .chat-tools { display:flex; gap:8px; margin-bottom:8px; }
+  .chat-tool-btn { border:1px solid #e0e0e0; background:#f8f8f8; border-radius:8px; padding:5px 10px; font-size:12px; cursor:pointer; color:#666; transition:all .3s; }
+  .chat-tool-btn:hover { border-color:var(--primary); color:var(--primary); }
+
+  /* ===== TESTIMONIALS ===== */
+  #reviews { background:var(--light-bg); }
+  .review-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px; }
+  .review-card { background:#fff; border-radius:var(--radius); padding:26px; box-shadow:var(--shadow); }
+  .review-stars { color:var(--accent); font-size:18px; margin-bottom:14px; }
+  .review-text { font-size:15px; color:#555; line-height:1.7; margin-bottom:16px; font-style:italic; }
+  .review-author { display:flex; align-items:center; gap:12px; }
+  .review-avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; font-weight:700; }
+  .review-name { font-weight:700; color:var(--dark); font-size:15px; }
+  .review-trip { font-size:13px; color:#888; }
+
+  /* ===== CTA ===== */
+  #cta {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, #0a3d2e 100%);
+    text-align:center; padding:80px 40px; position:relative; overflow:hidden;
+  }
+  #cta::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+  #cta .container { position:relative; }
+  #cta h2 { font-size:clamp(28px,4vw,46px); font-weight:900; color:#fff; margin-bottom:16px; }
+  #cta p { font-size:18px; color:rgba(255,255,255,0.8); margin-bottom:36px; }
+  .cta-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+  .cta-btn-primary { background:#fff; color:var(--primary); padding:16px 40px; border-radius:50px; font-size:16px; font-weight:700; border:none; cursor:pointer; transition:all .3s; }
+  .cta-btn-primary:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,0,0,0.2); }
+  .cta-btn-secondary { background:rgba(255,255,255,0.15); color:#fff; padding:16px 40px; border-radius:50px; font-size:16px; font-weight:700; border:2px solid rgba(255,255,255,0.4); cursor:pointer; transition:all .3s; }
+  .cta-btn-secondary:hover { background:rgba(255,255,255,0.25); }
+
+  /* ===== FOOTER ===== */
+  footer { background:var(--dark); color:rgba(255,255,255,0.7); padding:60px 40px 30px; }
+  .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+  .footer-brand .logo-text { color:#fff; font-size:22px; }
+  .footer-desc { font-size:14px; line-height:1.7; margin:16px 0; }
+  .footer-social { display:flex; gap:12px; }
+  .social-btn { width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .3s; font-size:16px; text-decoration:none; }
+  .social-btn:hover { background:var(--primary); }
+  .footer-col h4 { color:#fff; font-size:15px; font-weight:700; margin-bottom:16px; }
+  .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .footer-col ul li a { color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; transition:color .3s; cursor:pointer; }
+  .footer-col ul li a:hover { color:var(--primary); }
+  .footer-bottom { border-top:1px solid rgba(255,255,255,0.1); padding-top:20px; display:flex; justify-content:space-between; align-items:center; font-size:13px; flex-wrap:wrap; gap:10px; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10000; backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:#fff; border-radius:20px; padding:32px; max-width:500px; width:90%; max-height:90vh; overflow-y:auto; animation: modalIn .3s ease; }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+  .modal-title { font-size:22px; font-weight:800; color:var(--dark); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+  .modal-close { margin-left:auto; background:none; border:none; font-size:22px; cursor:pointer; color:#999; }
+  .itinerary-full { display:flex; flex-direction:column; gap:16px; }
+  .itinerary-full-day { background:var(--light-bg); border-radius:12px; padding:16px; border-left:4px solid var(--primary); }
+  .ifd-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .ifd-day { background:var(--primary); color:#fff; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:700; }
+  .ifd-title { font-weight:700; color:var(--dark); }
+  .ifd-items { display:flex; flex-direction:column; gap:8px; }
+  .ifd-item { display:flex; gap:8px; font-size:14px; color:#555; }
+  .ifd-time { color:var(--primary); font-weight:600; min-width:50px; font-size:13px; }
+
+  /* ===== SCROLL PROGRESS ===== */
+  .scroll-progress { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg, var(--primary), var(--accent)); z-index:10001; transition:width .1s; width:0%; }
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:900px) {
+    nav { padding:0 20px; }
+    .nav-links { display:none; }
+    section { padding:60px 20px; }
+    .dest-grid { grid-template-columns:1fr 1fr; }
+    .dest-card.featured { grid-column:span 2; }
+    .footer-grid { grid-template-columns:1fr 1fr; }
+    .floating-card { display:none; }
+    .chat-window { width:calc(100vw - 40px); right:20px; }
+    .hero-stats { gap:20px; }
+  }
+  @media(max-width:600px) {
+    .dest-grid { grid-template-columns:1fr; }
+    .dest-card.featured { grid-column:span 1; }
+    .footer-grid { grid-template-columns:1fr; }
+    .booking-tabs { overflow-x:auto; width:100%; }
+    .booking-tab { white-space:nowrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="logo" onclick="scrollTo('hero')">
+    <div class="logo-icon">☁️</div>
+    <div class="logo-text">澳云<span>旅游</span></div>
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="scrollTo('destinations')" class="nav-link">目的地</a></li>
+    <li><a onclick="scrollTo('packages')" class="nav-link">精品行程</a></li>
+    <li><a onclick="scrollTo('services')" class="nav-link">预订服务</a></li>
+    <li><a onclick="scrollTo('food')" class="nav-link">美食推荐</a></li>
+    <li><a onclick="scrollTo('reviews')" class="nav-link">旅客评价</a></li>
+  </ul>
+  <button class="nav-btn" onclick="openChat()">💬 AI定制行程</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🌟 澳洲最专业的华人地接服务</div>
+    <h1 class="hero-title">探索<span class="highlight">澳大利亚</span><br>每一寸美丽</h1>
+    <p class="hero-subtitle">AI智能定制 · 全程无忧 · 华人导游 · 机票酒店一站搞定</p>
+    <div class="hero-search">
+      <span style="font-size:20px">🔍</span>
+      <input type="text" id="heroSearch" placeholder="搜索目的地、行程或活动..." />
+      <select>
+        <option>悉尼</option><option>墨尔本</option><option>布里斯班</option>
+        <option>黄金海岸</option><option>凯恩斯</option><option>珀斯</option>
+      </select>
+      <button class="hero-search-btn" onclick="doSearch()">🔍 搜索</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">50,000+</div><div class="stat-label">服务游客</div></div>
+      <div class="stat"><div class="stat-num">4.9⭐</div><div class="stat-label">综合评分</div></div>
+      <div class="stat"><div class="stat-num">200+</div><div class="stat-label">精品行程</div></div>
+      <div class="stat"><div class="stat-num">15年</div><div class="stat-label">专业地接</div></div>
+    </div>
+  </div>
+  <div class="floating-card card1">
+    <div class="fc-icon">🤖</div>
+    <div><div class="fc-text" style="font-weight:700">AI智能规划</div><div class="fc-sub">10秒生成专属行程</div></div>
+  </div>
+  <div class="floating-card card2">
+    <div class="fc-icon">🛡️</div>
+    <div><div class="fc-text" style="font-weight:700">全程保障</div><div class="fc-sub">出行无忧，随时支援</div></div>
+  </div>
+</section>
+
+<!-- DESTINATIONS -->
+<section id="destinations">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🗺️ 热门目的地</div>
+      <h2 class="section-title">探索澳洲精彩城市</h2>
+      <p class="section-desc">从悉尼到乌鲁鲁，每座城市都有独一无二的故事在等你</p>
+    </div>
+    <div class="dest-grid">
+      <div class="dest-card featured" onclick="showDestDetail('悉尼')">
+        <img class="dest-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" alt="悉尼" onerror="this.style.background='linear-gradient(135deg,#0a4a2f,#1a6b3e)'">
+        <div class="dest-overlay">
+          <div class="dest-tag">🔥 最热门</div>
+          <div class="dest-name">悉尼 Sydney</div>
+          <div class="dest-info">🏛️ 歌剧院 · 港湾大桥 · 邦迪海滩 · 蓝山国家公园</div>
+        </div>
+      </div>
+      <div class="dest-card" onclick="showDestDetail('墨尔本')">
+        <img class="dest-img" src="https://images.unsplash.com/photo-1545044846-351ba102b6d5?w=600&q=80" alt="墨尔本" onerror="this.style.background='linear-gradient(135deg,#1a3a6e,#2a5ab8)'">
+        <div class="dest-overlay">
+          <div class="dest-tag">🎨 艺术之都</div>
+          <div class="dest-name">墨尔本 Melbourne</div>
+          <div class="dest-info">🎭 艺术 · 美食 · 咖啡文化</div>
+        </div>
+      </div>
+      <div class="dest-card" onclick="showDestDetail('大堡礁')">
+        <img class="dest-img" src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600&q=80" alt="大堡礁" onerror="this.style.background='linear-gradient(135deg,#0066cc,#00aaff)'">
+        <div class="dest-overlay">
+          <div class="dest-tag">🤿 潜水天堂</div>
+          <div class="dest-name">大堡礁</div>
+          <div class="dest-info">🐠 世界自然遗产</div>
+        </div>
+      </div>
+      <div class="dest-card" onclick="showDestDetail('黄金海岸')">
+        <img class="dest-img" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80" alt="黄金海岸" onerror="this.style.background='linear-gradient(135deg,#f5a623,#f76b1c)'">
+        <div class="dest-overlay">
+          <div class="dest-tag">🏖️ 度假胜地</div>
+          <div class="dest-name">黄金海岸</div>
+          <div class="dest-info">🎡 主题乐园 · 冲浪</div>
+        </div>
+      </div>
+      <div class="dest-card" onclick="showDestDetail('乌鲁鲁')">
+        <img class="dest-img" src="https://images.unsplash.com/photo-1529923870281-e32b86569dab?w=600&q=80" alt="乌鲁鲁" onerror="this.style.background='linear-gradient(135deg,#c0392b,#e74c3c)'">
+        <div class="dest-overlay">
+          <div class="dest-tag">🪨 神秘内陆</div>
+          <div class="dest-name">乌鲁鲁</div>
+          <div class="dest-info">🌅 土著文化 · 星空</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section id="packages" style="background:#fff">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">✈️ 精品行程</div>
+      <h2 class="section-title">为你精选的澳洲之旅</h2>
+      <p class="section-desc">每条线路都经过精心设计，华人领队全程陪同，让旅行更轻松</p>
+    </div>
+    <div class="pkg-grid">
+      <div class="pkg-card">
+        <div style="position:relative">
+          <img class="pkg-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" alt="悉尼" onerror="this.style.background='linear-gradient(135deg,#0a4a2f,#1a6b3e)'">
+          <div class="pkg-badge">热销第一</div>
+        </div>
+        <div class="pkg-body">
+          <div class="pkg-title">悉尼精华7日游</div>
+          <div class="pkg-meta">
+            <span class="pkg-meta-item">📅 7天6晚</span>
+            <span class="pkg-meta-item">👥 2-12人</span>
+            <span class="pkg-meta-item">⭐ 4.9</span>
+          </div>
+          <div class="pkg-desc">歌剧院·港湾大桥·邦迪海滩·蓝山国家公园·猎人谷葡萄酒庄</div>
+        </div>
+        <div class="pkg-footer">
+          <div class="pkg-price">
+            <div class="pkg-price-old">¥12,800</div>
+            <div class="pkg-price-new">¥9,800 <span>/人起</span></div>
+          </div>
+          <button class="pkg-btn" onclick="bookPackage('悉尼精华7日游')">立即预订</button>
+        </div>
+      </div>
+      <div class="pkg-card">
+        <div style="position:relative">
+          <img class="pkg-img" src="https://images.unsplash.com/photo-1545044846-351ba102b6d5?w=600&q=80" alt="墨尔本" onerror="this.style.background='linear-gradient(135deg,#1a3a6e,#2a5ab8)'">
+          <div class="pkg-badge">新品上线</div>
+        </div>
+        <div class="pkg-body">
+          <div class="pkg-title">墨尔本艺术5日</div>
+          <div class="pkg-meta">
+            <span class="pkg-meta-item">📅 5天4晚</span>
+            <span class="pkg-meta-item">👥 2-8人</span>
+            <span class="pkg-meta-item">⭐ 4.8</span>
+          </div>
+          <div class="pkg-desc">大洋路·十二使徒岩·雅拉谷酒庄·菲利普岛企鹅·墨尔本市区</div>
+        </div>
+        <div class="pkg-footer">
+          <div class="pkg-price">
+            <div class="pkg-price-old">¥9,500</div>
+            <div class="pkg-price-new">¥7,200 <span>/人起</span></div>
+          </div>
+          <button class="pkg-btn" onclick="bookPackage('墨尔本艺术5日')">立即预订</button>
+        </div>
+      </div>
+      <div class="pkg-card">
+        <div style="position:relative">
+          <img class="pkg-img" src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600&q=80" alt="大堡礁" onerror="this.style.background='linear-gradient(135deg,#0066cc,#00aaff)'">
+          <div class="pkg-badge">限时优惠</div>
+        </div>
+        <div class="pkg-body">
+          <div class="pkg-title">大堡礁凯恩斯4日</div>
+          <div class="pkg-meta">
+            <span class="pkg-meta-item">📅 4天3晚</span>
+            <span class="pkg-meta-item">👥 2-10人</span>
+            <span class="pkg-meta-item">⭐ 5.0</span>
+          </div>
+          <div class="pkg-desc">大堡礁潜水·热带雨林·库兰达小火车·棕榈湾·海底观光船</div>
+        </div>
+        <div class="pkg-footer">
+          <div class="pkg-price">
+            <div class="pkg-price-old">¥8,800</div>
+            <div class="pkg-price-new">¥6,500 <span>/人起</span></div>
+          </div>
+          <button class="pkg-btn" onclick="bookPackage('大堡礁凯恩斯4日')">立即预订</button>
+        </div>
+      </div>
+      <div class="pkg-card">
+        <div style="position:relative">
+          <img class="pkg-img" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80" alt="黄金海岸" onerror="this.style.background='linear-gradient(135deg,#f5a623,#f76b1c)'">
+          <div class="pkg-badge">家庭首选</div>
+        </div>
+        <div class="pkg-body">
+          <div class="pkg-title">黄金海岸亲子6日</div>
+          <div class="pkg-meta">
+            <span class="pkg-meta-item">📅 6天5晚</span>
+            <span class="pkg-meta-item">👥 家庭团</span>
+            <span class="pkg-meta-item">⭐ 4.9</span>
+          </div>
+          <div class="pkg-desc">梦幻世界·海洋世界·惊险乐园·冲浪者天堂·电影世界</div>
+        </div>
+        <div class="pkg-footer">
+          <div class="pkg-price">
+            <div class="pkg-price-old">¥13,500</div>
+            <div class="pkg-price-new">¥10,800 <span>/人起</span></div>
+          </div>
+          <button class="pkg-btn" onclick="bookPackage('黄金海岸亲子6日')">立即预订</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🛒 一站式预订</div>
+      <h2 class="section-title">全程服务，一切为你安排</h2>
+      <p class="section-desc">从机票到门票，从酒店到用车，澳云旅游帮你搞定每个细节</p>
+    </div>
+    <div class="service-grid">
+      <div class="service-card" onclick="openBookingTab('flight')">
+        <span class="service-icon">✈️</span>
+        <div class="service-name">国际机票</div>
+        <div class="service-desc">中澳直飞优惠票价，多家航空公司比价，灵活日期选择</div>
+        <div class="service-action">查询机票 →</div>
+      </div>
+      <div class="service-card" onclick="openBookingTab('hotel')">
+        <span class="service-icon">🏨</span>
+        <div class="service-name">精品酒店</div>
+        <div class="service-desc">五星豪华到精品民宿，地理位置优越，华人友好</div>
+        <div class="service-action">浏览酒店 →</div>
+      </div>
+      <div class="service-card" onclick="openBookingTab('car')">
+        <span class="service-icon">🚗</span>
+        <div class="service-name">接送用车</div>
+        <div class="service-desc">机场接送、包车游览、中文司导，豪华商务车队</div>
+        <div class="service-action">预订用车 →</div>
+      </div>
+      <div class="service-card" onclick="openBookingTab('ticket')">
+        <span class="service-icon">🎟️</span>
+        <div class="service-name">景点门票</div>
+        <div class="service-desc">歌剧院、动物园、大堡礁等200+景点，线上预购优惠</div>
+        <div class="service-action">购买门票 →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING FORMS -->
+<section id="booking">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">📋 在线预订</div>
+      <h2 class="section-title">快速预订，轻松出行</h2>
+    </div>
+    <div class="booking-tabs">
+      <button class="booking-tab active" onclick="switchTab('flight')">✈️ 机票</button>
+      <button class="booking-tab" onclick="switchTab('hotel')">🏨 酒店</button>
+      <button class="booking-tab" onclick="switchTab('car')">🚗 用车</button>
+      <button class="booking-tab" onclick="switchTab('ticket')">🎟️ 门票</button>
+    </div>
+
+    <div id="tab-flight" class="booking-panel active">
+      <div class="booking-form">
+        <div class="form-row">
+          <div class="form-group"><label>出发城市</label><input placeholder="例：北京、上海、广州" /></div>
+          <div class="form-group"><label>到达城市</label>
+            <select><option>悉尼(SYD)</option><option>墨尔本(MEL)</option><option>布里斯班(BNE)</option><option>凯恩斯(CNS)</option><option>珀斯(PER)</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>出发日期</label><input type="date" /></div>
+          <div class="form-group"><label>返回日期</label><input type="date" /></div>
+          <div class="form-group"><label>乘客人数</label>
+            <select><option>1人</option><option>2人</option><option>3人</option><option>4人</option><option>5人以上</option></select>
+          </div>
+          <div class="form-group"><label>舱位等级</label>
+            <select><option>经济舱</option><option>商务舱</option><option>头等舱</option></select>
+          </div>
+        </div>
+        <button class="search-btn-large" onclick="showSearchResult('机票')">🔍 搜索最优机票</button>
+      </div>
+    </div>
+
+    <div id="tab-hotel" class="booking-panel">
+      <div class="booking-form">
+        <div class="form-row">
+          <div class="form-group"><label>目的地城市</label>
+            <select><option>悉尼</option><option>墨尔本</option><option>布里斯班</option><option>黄金海岸</option><option>凯恩斯</option></select>
+          </div>
+          <div class="form-group"><label>入住日期</label><input type="date" /></div>
+          <div class="form-group"><label>离店日期</label><input type="date" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>房间数量</label>
+            <select><option>1间</option><option>2间</option><option>3间</option></select>
+          </div>
+          <div class="form-group"><label>酒店星级</label>
+            <select><option>不限</option><option>3星</option><option>4星</option><option>5星</option><option>精品民宿</option></select>
+          </div>
+          <div class="form-group"><label>每晚预算(AUD)</label>
+            <select><option>不限</option><option>100以下</option><option>100-200</option><option>200-400</option><option>400以上</option></select>
+          </div>
+        </div>
+        <button class="search-btn-large" onclick="showSearchResult('酒店')">🔍 查询可用酒店</button>
+      </div>
+    </div>
+
+    <div id="tab-car" class="booking-panel">
+      <div class="booking-form">
+        <div class="form-row">
+          <div class="form-group"><label>服务类型</label>
+            <select><option>机场接送</option><option>包车半日游</option><option>包车全日游</option><option>多日包车</option></select>
+          </div>
+          <div class="form-group"><label>出发地点</label><input placeholder="例：悉尼国际机场" /></div>
+          <div class="form-group"><label>目的地</label><input placeholder="例：市区酒店" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>服务日期</label><input type="date" /></div>
+          <div class="form-group"><label>服务时间</label><input type="time" /></div>
+          <div class="form-group"><label>乘客人数</label>
+            <select><option>1-3人</option><option>4-6人</option><option>7-13人</option><option>14人以上</option></select>
+          </div>
+          <div class="form-group"><label>车型选择</label>
+            <select><option>标准轿车</option><option>商务MPV</option><option>豪华SUV</option><option>中型面包车</option></select>
+          </div>
+        </div>
+        <button class="search-btn-large" onclick="showSearchResult('用车')">🚗 立即预订用车</button>
+      </div>
+    </div>
+
+    <div id="tab-ticket" class="booking-panel">
+      <div class="booking-form">
+        <div class="form-row">
+          <div class="form-group"><label>目的地</label>
+            <select><option>悉尼</option><option>墨尔本</option><option>布里斯班/黄金海岸</option><option>凯恩斯/大堡礁</option><option>珀斯</option></select>
+          </div>
+          <div class="form-group"><label>景点类型</label>
+            <select><option>自然景观</option><option>主题乐园</option><option>文化艺术</option><option>海洋活动</option><option>动植物园</option></select>
+          </div>
+          <div class="form-group"><label>游览日期</label><input type="date" /></div>
+        </div>
+        <div style="margin-top:20px">
+          <p style="font-size:14px;color:#666;margin-bottom:14px;">热门景点门票</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+            <div style="background:var(--light-bg);border-radius:12px;padding:14px;cursor:pointer;border:2px solid transparent;transition:all .3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'" onclick="bookTicket('悉尼歌剧院')">
+              <div style="font-size:24px;margin-bottom:6px">🎭</div>
+              <div style="font-weight:700;font-size:14px">悉尼歌剧院导览</div>
+              <div style="color:var(--primary);font-weight:700;margin-top:6px">AUD 29起</div>
+            </div>
+            <div style="background:var(--light-bg);border-radius:12px;padding:14px;cursor:pointer;border:2px solid transparent;transition:all .3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'" onclick="bookTicket('悉尼动物园')">
+              <div style="font-size:24px;margin-bottom:6px">🦘</div>
+              <div style="font-weight:700;font-size:14px">塔龙加动物园</div>
+              <div style="color:var(--primary);font-weight:700;margin-top:6px">AUD 47起</div>
+            </div>
+            <div style="background:var(--light-bg);border-radius:12px;padding:14px;cursor:pointer;border:2px solid transparent;transition:all .3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'" onclick="bookTicket('大堡礁潜水')">
+              <div style="font-size:24px;margin-bottom:6px">🤿</div>
+              <div style="font-weight:700;font-size:14px">大堡礁潜水体验</div>
+              <div style="color:var(--primary);font-weight:700;margin-top:6px">AUD 199起</div>
+            </div>
+            <div style="background:var(--light-bg);border-radius:12px;padding:14px;cursor:pointer;border:2px solid transparent;transition:all .3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'" onclick="bookTicket('梦幻世界')">
+              <div style="font-size:24px;margin-bottom:6px">🎡</div>
+              <div style="font-weight:700;font-size:14px">黄金海岸梦幻世界</div>
+              <div style="color:var(--primary);font-weight:700;margin-top:6px">AUD 109起</div>
+            </div>
+            <div style="background:var(--light-bg);border-radius:12px;padding:14px;cursor:pointer;border:2px solid transparent;transition:all .3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'" onclick="bookTicket('库兰达小火车')">
+              <div style="font-size:24px;margin-bottom:6px">🚂</div>
+              <div style="font-weight:700;font-size:14px">库兰达观光小火车</div>
+              <div style="color:var(--primary);font-weight:700;margin-top:6px">AUD 58起</div>
+            </div>
+            <div style="background:var(--light-bg);border-radius:12px;padding:14px;cursor:pointer;border:2px solid transparent;transition:all .3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'" onclick="bookTicket('企鹅岛')">
+              <div style="font-size:24px;margin-bottom:6px">🐧</div>
+              <div style="font-weight:700;font-size:14px">菲利普岛企鹅归巢</div>
+              <div style="color:var(--primary);font-weight:700;margin-top:6px">AUD 35起</div>
+            </div>
+          </div>
+        </div>
+        <button class="search-btn-large" onclick="showSearchResult('门票')" style="margin-top:20px">🎟️ 搜索更多景点门票</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOD -->
+<section id="food">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🍽️ 美食推荐</div>
+      <h2 class="section-title">澳洲必吃美食指南</h2>
+      <p class="section-desc">AI精选澳洲各地特色美食，从新鲜海鲜到牛排，让你的味蕾也来一段旅行</p>
+    </div>
+    <div class="food-categories">
+      <button class="food-cat-btn active" onclick="filterFood('all', this)">🍽️ 全部</button>
+      <button class="food-cat-btn" onclick="filterFood('seafood', this)">🦞 海鲜</button>
+      <button class="food-cat-btn" onclick="filterFood('steak', this)">🥩 牛排</button>
+      <button class="food-cat-btn" onclick="filterFood('chinese', this)">🥢 中餐</button>
+      <button class="food-cat-btn" onclick="filterFood('cafe', this)">☕ 咖啡甜品</button>
+      <button class="food-cat-btn" onclick="filterFood('local', this)">🦘 地道风味</button>
+    </div>
+    <div class="food-grid" id="foodGrid">
+      <!-- Dynamically filled -->
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">💬 旅客评价</div>
+      <h2 class="section-title">真实旅客好评如潮</h2>
+      <p class="section-desc">超过50,000名游客的信赖，每一个好评都是我们前进的动力</p>
+    </div>
+    <div class="review-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">"AI客服太厉害了！我只是说想去感受澳洲的自然风光，它立刻给我规划了一个完美的10天行程，从大堡礁到乌鲁鲁，安排得井井有条。"</div>
+        <div class="review-author"><div class="review-avatar">张</div><div><div class="review-name">张雅婷</div><div class="review-trip">悉尼+大堡礁·12日游 | 2025年3月</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">"带着老人孩子出行，最担心用车问题。澳云旅游的司机准时又专业，中文沟通无障碍，酒店位置也特别好，全程非常放心！"</div>
+        <div class="review-author"><div class="review-avatar">李</div><div><div class="review-name">李明远</div><div class="review-trip">黄金海岸亲子游·8日 | 2025年2月</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">"美食推荐功能真的超实用！每到一个城市都按照推荐去吃，没有一次踩雷。悉尼的岩石区生蚝和墨尔本的牛排是我这辈子吃过最好吃的东西。"</div>
+        <div class="review-author"><div class="review-avatar">王</div><div><div class="review-name">王晓雪</div><div class="review-trip">澳洲东海岸·15日游 | 2025年1月</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <h2>现在开始规划你的澳洲之旅</h2>
+    <p>AI智能客服7×24小时在线，10秒生成专属行程方案</p>
+    <div class="cta-btns">
+      <button class="cta-btn-primary" onclick="openChat()">🤖 立即开始AI定制</button>
+      <button class="cta-btn-secondary" onclick="scrollTo('packages')">📋 浏览精品行程</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-icon">☁️</div><div class="logo-text">澳云<span>旅游</span></div></div>
+        <p class="footer-desc">15年澳洲地接经验，5万+游客信赖选择。全程华人服务，让每一次澳洲之旅都成为难忘回忆。</p>
+        <div class="footer-social">
+          <a class="social-btn" title="微信">💬</a>
+          <a class="social-btn" title="微博">📱</a>
+          <a class="social-btn" title="抖音">🎵</a>
+          <a class="social-btn" title="小红书">📕</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>目的地</h4><ul><li><a>悉尼</a></li><li><a>墨尔本</a></li><li><a>黄金海岸</a></li><li><a>凯恩斯</a></li><li><a>珀斯</a></li><li><a>乌鲁鲁</a></li></ul></div>
+      <div class="footer-col"><h4>服务项目</h4><ul><li><a>定制行程</a></li><li><a>国际机票</a></li><li><a>精品酒店</a></li><li><a>接送用车</a></li><li><a>景点门票</a></li><li><a>美食推荐</a></li></ul></div>
+      <div class="footer-col"><h4>关于我们</h4><ul><li><a>公司介绍</a></li><li><a>合作伙伴</a></li><li><a>加入我们</a></li><li><a>联系方式</a></li><li><a>退改政策</a></li><li><a>常见问题</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 澳云旅游 Aucloud Travel · 保留所有权利</span>
+      <span>📍 Brisbane, Australia · 澳大利亚旅游许可证</span>
+      <span>📞 <a href="tel:+61405352222" style="color:inherit;text-decoration:none;">+61 405 352 222</a> · 📧 <a href="mailto:info@aucloudtravel.com" style="color:inherit;text-decoration:none;">info@aucloudtravel.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- AI Chat Button -->
+<button class="ai-chat-btn" onclick="toggleChat()">
+  <span style="font-size:28px">🤖</span>
+  <div class="ai-chat-badge">AI</div>
+</button>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="chat-avatar">🤖</div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">澳游AI · 智能旅行顾问</div>
+      <div class="chat-header-status"><span class="status-dot"></span>在线中 · 平均回复时间 &lt;1秒</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">×</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <!-- Messages will be inserted here -->
+  </div>
+  <div class="chat-input-area">
+    <div class="chat-tools">
+      <button class="chat-tool-btn" onclick="quickAsk('帮我规划行程')">📋 规划行程</button>
+      <button class="chat-tool-btn" onclick="quickAsk('推荐景点')">🗺️ 景点推荐</button>
+      <button class="chat-tool-btn" onclick="quickAsk('推荐美食')">🍽️ 美食推荐</button>
+      <button class="chat-tool-btn" onclick="quickAsk('预订帮助')">🛒 预订帮助</button>
+    </div>
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" placeholder="输入您的问题..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="chat-send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+// ===== FOOD DATA =====
+const foods = [
+  { id:1, name:'悉尼岩石区生蚝', desc:'新鲜肥美的本地生蚝，配上柠檬汁，是悉尼最经典的海鲜体验', rating:'4.9', price:'AUD 28起', img:'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400&q=80', cat:'seafood', city:'悉尼' },
+  { id:2, name:'墨尔本顶级干式熟成牛排', desc:'维多利亚州最优质牛肉，21天干式熟成，外焦里嫩，肉汁丰富', rating:'5.0', price:'AUD 65起', img:'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80', cat:'steak', city:'墨尔本' },
+  { id:3, name:'凯恩斯龙虾大餐', desc:'现捕新鲜龙虾，多种烹饪方式，热带海鲜的极致享受', rating:'4.8', price:'AUD 89起', img:'https://images.unsplash.com/photo-1562802378-063ec186a863?w=400&q=80', cat:'seafood', city:'凯恩斯' },
+  { id:4, name:'悉尼唐人街港式早茶', desc:'地道港式茶点，虾饺、烧卖、叉烧包，慰藉游子乡愁', rating:'4.7', price:'AUD 25起', img:'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', cat:'chinese', city:'悉尼' },
+  { id:5, name:'墨尔本精品咖啡', desc:'墨尔本是世界咖啡之都，小巷里的精品咖啡馆各有特色', rating:'4.9', price:'AUD 5起', img:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80', cat:'cafe', city:'墨尔本' },
+  { id:6, name:'澳洲特色肉馅派', desc:'澳洲国民小吃，酥脆外皮包裹浓郁肉馅，配托马托酱完美', rating:'4.6', price:'AUD 6起', img:'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&q=80', cat:'local', city:'全澳' },
+  { id:7, name:'黄金海岸新鲜扇贝', desc:'黄金海岸渔港直供，清甜鲜美，现开现吃最为新鲜', rating:'4.8', price:'AUD 35起', img:'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&q=80', cat:'seafood', city:'黄金海岸' },
+  { id:8, name:'悉尼Pavlova蛋白霜蛋糕', desc:'澳洲国宝甜点，外酥里嫩，搭配新鲜奇异果，甜而不腻', rating:'4.7', price:'AUD 12起', img:'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80', cat:'cafe', city:'悉尼' },
+];
+
+// ===== AI CHAT =====
+const aiResponses = {
+  default: [
+    { text: "您好！我是澳游AI智能旅行顾问 🤖 我可以帮您：\n\n📋 **定制专属行程**\n✈️ **搜索机票**\n🏨 **推荐酒店**\n🚗 **安排用车**\n🎟️ **购买门票**\n🍽️ **推荐美食**\n\n请告诉我您的旅行计划，我来帮您安排！", quick: ['我想去悉尼7天', '带孩子去黄金海岸', '大堡礁潜水之旅', '澳洲东海岸全游'] }
+  ],
+  itinerary: {
+    '悉尼': { days: 7, plan: [
+      { day: '第1天', title: '抵达悉尼·城市初探', items: [{ time:'14:00', icon:'✈️', text:'抵达悉尼金斯福德·史密斯机场，专车接机' }, { time:'16:00', icon:'🏨', text:'入住市区精品酒店，休息整顿' }, { time:'19:00', icon:'🦞', text:'岩石区码头享用新鲜海鲜晚餐' }] },
+      { day: '第2天', title: '歌剧院·港湾大桥', items: [{ time:'09:00', icon:'🎭', text:'悉尼歌剧院内部导览参观' }, { time:'11:00', icon:'🌉', text:'港湾大桥攀爬体验（可选）' }, { time:'15:00', icon:'🏖️', text:'邦迪海滩游览，网红冰淇淋必打卡' }] },
+      { day: '第3天', title: '蓝山国家公园', items: [{ time:'08:00', icon:'🚌', text:'专车前往蓝山（约2小时）' }, { time:'10:30', icon:'🏔️', text:'三姐妹岩观景台、回声角' }, { time:'13:00', icon:'🌿', text:'杰诺兰溶洞探险（可选）' }] },
+      { day: '第4天', title: '猎人谷美酒美食', items: [{ time:'09:00', icon:'🍇', text:'猎人谷葡萄酒庄参观品酒' }, { time:'13:00', icon:'🧀', text:'庄园有机午餐·橄榄油品尝' }, { time:'16:00', icon:'🦒', text:'雪松溪野生动物园喂袋鼠' }] },
+    ] },
+    '黄金海岸': { days: 6, plan: [
+      { day: '第1天', title: '抵达·海滩初见', items: [{ time:'14:00', icon:'✈️', text:'抵达布里斯班机场，专车前往黄金海岸' }, { time:'17:00', icon:'🏖️', text:'冲浪者天堂海滩漫步' }, { time:'19:00', icon:'🦐', text:'海边餐厅享用海鲜大餐' }] },
+      { day: '第2天', title: '主题乐园·梦幻世界', items: [{ time:'09:00', icon:'🎡', text:'全天畅玩梦幻世界' }, { time:'18:00', icon:'🌅', text:'返回酒店，冲浪者天堂夜市' }] },
+    ] }
+  }
+};
+
+let chatOpen = false;
+let chatInitialized = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const win = document.getElementById('chatWindow');
+  win.classList.toggle('open', chatOpen);
+  if(chatOpen && !chatInitialized) { initChat(); chatInitialized = true; }
+}
+function openChat() {
+  chatOpen = true;
+  document.getElementById('chatWindow').classList.add('open');
+  if(!chatInitialized) { initChat(); chatInitialized = true; }
+}
+function initChat() {
+  const msgs = document.getElementById('chatMessages');
+  msgs.innerHTML = '';
+  setTimeout(() => addBotMsg(aiResponses.default[0].text, aiResponses.default[0].quick), 300);
+}
+
+function addBotMsg(text, quickReplies) {
+  const msgs = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = 'msg';
+  const formattedText = text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  let qrHtml = '';
+  if(quickReplies && quickReplies.length) {
+    qrHtml = '<div class="quick-replies">' + quickReplies.map(q=>`<span class="quick-reply" onclick="quickAsk('${q}')">${q}</span>`).join('') + '</div>';
+  }
+  el.innerHTML = `<div class="msg-avatar">🤖</div><div><div class="msg-bubble">${formattedText}${qrHtml}</div></div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = 'msg user';
+  el.innerHTML = `<div class="msg-avatar">😊</div><div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = 'msg'; el.id = 'typingIndicator';
+  el.innerHTML = `<div class="msg-avatar">🤖</div><div class="msg-bubble" style="padding:12px 18px"><span style="display:flex;gap:4px;align-items:center"><span style="width:8px;height:8px;background:#aaa;border-radius:50%;animation:blink 1s .0s infinite"></span><span style="width:8px;height:8px;background:#aaa;border-radius:50%;animation:blink 1s .2s infinite"></span><span style="width:8px;height:8px;background:#aaa;border-radius:50%;animation:blink 1s .4s infinite"></span></span></div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  return el;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if(el) el.remove();
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = ''; input.style.height = 'auto';
+  processUserMessage(text);
+}
+function quickAsk(q) { processUserMessage(q); }
+function handleChatKey(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 80) + 'px'; }
+
+function processUserMessage(text) {
+  addUserMsg(text);
+  const typing = addTyping();
+  const delay = 800 + Math.random() * 600;
+  setTimeout(() => { removeTyping(); generateAIResponse(text); }, delay);
+}
+
+function generateAIResponse(userText) {
+  const t = userText.toLowerCase();
+  if(t.includes('悉尼') && (t.includes('行程') || t.includes('天') || t.includes('规划') || t.includes('去'))) {
+    addBotMsg('太棒了！我为您规划了 **悉尼7天精华行程** 🗺️\n\n根据您的需求，我推荐以下行程概览：', null);
+    setTimeout(() => {
+      addItineraryCard('悉尼');
+      setTimeout(() => addBotMsg('这只是行程预览！您还需要我帮您：\n\n✈️ 查询合适的机票\n🏨 推荐优质酒店\n🚗 安排接送用车\n🎟️ 预购景点门票', ['查询机票', '推荐酒店', '安排用车', '购买门票']), 600);
+    }, 400);
+  } else if(t.includes('黄金海岸') || t.includes('孩子') || t.includes('亲子')) {
+    addBotMsg('黄金海岸是亲子旅行的绝佳选择！🎡\n\n这里有**5大主题乐园**，让小朋友玩到不想回家！我来帮您规划专属亲子行程：', null);
+    setTimeout(() => { addItineraryCard('黄金海岸'); }, 400);
+  } else if(t.includes('大堡礁') || t.includes('潜水')) {
+    addBotMsg('大堡礁是地球上最美的自然奇观之一！🤿\n\n**凯恩斯+大堡礁 4日精华游**：\n\n🤿 **Day1**: 抵达凯恩斯，市区游览\n🐠 **Day2**: 大堡礁一日游（浮潜/潜水/玻璃船）\n🌿 **Day3**: 库兰达热带雨林，观光小火车\n🏃 **Day4**: 棕榈湾白沙滩，自由活动，下午返程\n\n**人均费用约：¥6,500-8,000**（含机票酒店）', ['查询机票', '预订大堡礁门票', '推荐当地美食', '了解更多行程']);
+  } else if(t.includes('机票')) {
+    addBotMsg('好的！帮您查询近期优质机票 ✈️\n\n**北京→悉尼 参考票价**：\n🟢 东方航空 | 经济舱 | **¥3,280起**\n🟢 国际航空 | 经济舱 | **¥3,580起**\n🔵 国航 | 商务舱 | **¥12,800起**\n\n💡 提示：提前45天购票可节省约30%\n\n请告诉我您的出发城市和大概日期，我给您搜索最优价格！', ['出发城市：北京', '出发城市：上海', '出发城市：广州', '我要商务舱']);
+  } else if(t.includes('酒店')) {
+    addBotMsg('为您推荐悉尼热门酒店 🏨\n\n⭐⭐⭐⭐⭐ **四季酒店**\n📍 市中心，步行至歌剧院\n💰 约 AUD 380/晚\n\n⭐⭐⭐⭐⭐ **柏悦酒店**\n📍 迪令赫斯特，精品设计\n💰 约 AUD 290/晚\n\n⭐⭐⭐⭐ **悉尼公园假日酒店**\n📍 近中央火车站，交通便利\n💰 约 AUD 150/晚\n\n需要我帮您查询具体日期的可用房间吗？', ['查看四季酒店', '查看柏悦酒店', '帮我预订酒店']);
+  } else if(t.includes('美食') || t.includes('吃什么') || t.includes('好吃')) {
+    addBotMsg('澳洲美食超级丰富！🍽️ 我来给您划重点：\n\n🦞 **必吃海鲜**：悉尼岩石区生蚝、凯恩斯龙虾\n🥩 **必吃牛排**：墨尔本干式熟成牛排\n☕ **必喝咖啡**：墨尔本精品flat white\n🎂 **必吃甜点**：澳式Pavlova蛋白霜蛋糕\n🥧 **必吃小吃**：澳洲肉馅派\n\n👆 页面上方有详细的美食地图，点击即可查看！', ['悉尼美食推荐', '墨尔本必吃清单', '有没有中餐推荐', '素食友好餐厅']);
+  } else if(t.includes('中餐') || t.includes('中国菜')) {
+    addBotMsg('在澳洲想念中餐完全不用担心！🥢\n\n**悉尼唐人街**（Dixon Street）：\n🍜 正宗粤式早茶、港式烧腊\n🥟 上海小笼包、四川火锅\n\n**墨尔本Box Hill**：\n🍱 最正宗的华人聚居区\n🍲 东南亚+中式融合菜\n\n推荐餐厅：帝苑楼（悉尼）、荣华楼（墨尔本）', ['返回看其他美食', '规划行程']);
+  } else if(t.includes('用车') || t.includes('接机') || t.includes('司机')) {
+    addBotMsg('澳云旅游为您提供专业用车服务 🚗\n\n**服务类型**：\n• 机场接送（悉尼/墨尔本/黄金海岸等）\n• 半日/全日包车游览\n• 多日长途包车\n\n**车型选择**：\n🚗 标准轿车（1-3人）AUD 80起\n🚐 商务MPV（4-7人）AUD 120起\n🚌 豪华大巴（8-13人）AUD 200起\n\n全部配备中文司导，熟悉当地路况！需要预订吗？', ['预订机场接机', '预订包车游览', '了解价格详情']);
+  } else if(t.includes('门票') || t.includes('景点')) {
+    addBotMsg('澳洲热门景点门票推荐 🎟️\n\n🎭 悉尼歌剧院导览 | AUD 29起\n🦘 塔龙加动物园 | AUD 47起\n🤿 大堡礁潜水体验 | AUD 199起\n🎡 黄金海岸梦幻世界 | AUD 109起\n🚂 库兰达观光小火车 | AUD 58起\n🐧 菲利普岛企鹅归巢 | AUD 35起\n\n💡 提前在线购票可节省10-30%！\n需要帮您加入行程并预购吗？', ['加入悉尼歌剧院', '加入大堡礁', '查看全部门票', '一键打包购买']);
+  } else if(t.includes('价格') || t.includes('多少钱') || t.includes('费用')) {
+    addBotMsg('澳洲旅游费用参考（含机票+酒店+地接）💰\n\n📅 **5天4晚**：约 **¥7,000-10,000/人**\n📅 **7天6晚**：约 **¥10,000-14,000/人**\n📅 **10天9晚**：约 **¥14,000-20,000/人**\n\n价格因旅行时间、人数、酒店档次而异。\n**学生/儿童**享受额外折扣！\n\n请告诉我您的具体需求，我给您精确报价 😊', ['获取定制报价', '有没有特价线路', '团队出行优惠']);
+  } else {
+    const responses = [
+      { text: '感谢您的咨询！🙏\n\n作为您的专属AI旅行顾问，我可以帮您：\n\n📋 **定制个性化行程** - 告诉我您的偏好\n✈️ **搜索最优机票** - 全网比价\n🏨 **推荐精品酒店** - 按需匹配\n🎟️ **购买景点门票** - 提前预约节省时间\n🍽️ **推荐当地美食** - 避坑必备\n\n请告诉我您想去哪里，玩几天，我来帮您规划！', quick: ['我想去悉尼', '我想去黄金海岸', '我想去大堡礁', '帮我规划10天行程'] },
+    ];
+    const r = responses[Math.floor(Math.random()*responses.length)];
+    addBotMsg(r.text, r.quick);
+  }
+}
+
+function addItineraryCard(city) {
+  const plan = aiResponses.itinerary[city];
+  if(!plan) return;
+  const msgs = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = 'msg';
+  let html = `<div class="msg-avatar">🤖</div><div><div class="msg-bubble"><div class="itinerary-card">`;
+  plan.plan.forEach(d => {
+    html += `<div class="itinerary-day">${d.day} · ${d.title}</div>`;
+    d.items.slice(0,2).forEach(item => {
+      html += `<div class="itinerary-item"><span>${item.icon}</span><span>${item.time} ${item.text}</span></div>`;
+    });
+  });
+  html += `</div><div class="quick-replies"><span class="quick-reply" onclick="showFullItinerary('${city}')">📋 查看完整行程</span><span class="quick-reply" onclick="quickAsk('帮我预订${city}行程')">🛒 直接预订</span></div></div></div>`;
+  el.innerHTML = html;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showFullItinerary(city) {
+  const plan = aiResponses.itinerary[city];
+  if(!plan) return;
+  let html = `<div class="modal-title">📋 ${city}${plan.days}天行程 <button class="modal-close" onclick="closeModal()">×</button></div><div class="itinerary-full">`;
+  plan.plan.forEach(d => {
+    html += `<div class="itinerary-full-day"><div class="ifd-header"><span class="ifd-day">${d.day}</span><span class="ifd-title">${d.title}</span></div><div class="ifd-items">`;
+    d.items.forEach(item => {
+      html += `<div class="ifd-item"><span class="ifd-time">${item.time}</span><span>${item.icon} ${item.text}</span></div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `</div><button class="search-btn-large" onclick="closeModal();quickAsk('帮我预订${city}行程')" style="margin-top:20px">🛒 一键预订此行程</button>`;
+  showModal(html);
+}
+
+// ===== BOOKING =====
+function switchTab(tab) {
+  document.querySelectorAll('.booking-tab').forEach((btn,i) => {
+    const tabs = ['flight','hotel','car','ticket'];
+    btn.classList.toggle('active', tabs[i]===tab);
+  });
+  document.querySelectorAll('.booking-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  scrollTo('booking');
+}
+function openBookingTab(tab) { switchTab(tab); scrollTo('booking'); }
+
+function showSearchResult(type) {
+  const msgs = { '机票':'✈️ 正在为您搜索最优机票，请稍候...', '酒店':'🏨 正在查询可用酒店，为您匹配最优选择...', '用车':'🚗 正在安排专业用车服务...', '门票':'🎟️ 正在搜索景点门票库存...' };
+  openChat();
+  setTimeout(() => processUserMessage(`帮我${type === '机票' ? '查询机票' : type === '酒店' ? '推荐酒店' : type === '用车' ? '安排用车' : '购买景点门票'}`), 300);
+}
+
+function bookPackage(name) {
+  openChat();
+  setTimeout(() => processUserMessage(`我想预订"${name}"，请告诉我详情和价格`), 300);
+}
+
+function bookTicket(name) {
+  openChat();
+  setTimeout(() => processUserMessage(`我想购买${name}的门票，有什么优惠吗？`), 300);
+}
+
+// ===== FOOD =====
+function renderFood(cat) {
+  const grid = document.getElementById('foodGrid');
+  const filtered = cat === 'all' ? foods : foods.filter(f => f.cat === cat);
+  grid.innerHTML = filtered.map(f => `
+    <div class="food-card">
+      <img class="food-img" src="${f.img}" alt="${f.name}" onerror="this.style.background='linear-gradient(135deg,#0a4a2f,#1a6b3e)'">
+      <div class="food-body">
+        <div class="food-name">${f.name}</div>
+        <div class="food-desc">${f.desc}</div>
+        <div class="food-footer">
+          <div class="food-rating">★ ${f.rating}</div>
+          <div class="food-price">${f.price}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function filterFood(cat, btn) {
+  document.querySelectorAll('.food-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFood(cat);
+}
+
+// ===== DESTINATIONS =====
+const destInfo = {
+  '悉尼': { desc: '澳大利亚最大城市，拥有世界级的悉尼歌剧院、港湾大桥、邦迪海滩，以及壮阔的蓝山国家公园。', highlights: ['悉尼歌剧院', '港湾大桥攀爬', '邦迪海滩', '蓝山国家公园', '塔龙加动物园'], best: '9月-11月（春季）', from: '¥9,800起' },
+  '墨尔本': { desc: '艺术与美食之都，以精品咖啡文化、涂鸦艺术街区、大洋路海景著称。', highlights: ['大洋路·十二使徒岩', '雅拉谷酒庄', '菲利普岛企鹅', '皇家植物园', '维多利亚市场'], best: '3月-5月（秋季）', from: '¥7,200起' },
+  '大堡礁': { desc: '世界最大珊瑚礁系统，联合国教科文组织世界遗产，是潜水爱好者的圣地。', highlights: ['大堡礁浮潜/潜水', '玻璃底船观光', '库兰达雨林', '棕榈湾白沙滩', '热带水果品尝'], best: '5月-10月（旱季）', from: '¥6,500起' },
+  '黄金海岸': { desc: '阳光沙滩与主题乐园的完美融合，是家庭旅行和年轻人度假的首选。', highlights: ['冲浪者天堂海滩', '梦幻世界', '海洋世界', '电影世界', '自然桥'], best: '全年适宜，6-8月最佳', from: '¥10,800起' },
+  '乌鲁鲁': { desc: '澳洲内陆的神秘巨石，土著文化的圣地，日出日落时分变幻出令人窒息的色彩。', highlights: ['乌鲁鲁日出日落', '卡塔曲塔国家公园', '土著文化体验', '沙漠星空观测', '骆驼骑行'], best: '4月-9月（凉季）', from: '¥8,500起' },
+};
+function showDestDetail(city) {
+  const info = destInfo[city];
+  if(!info) return;
+  let html = `<div class="modal-title">🗺️ ${city} <button class="modal-close" onclick="closeModal()">×</button></div>
+    <p style="color:#666;font-size:15px;line-height:1.7;margin-bottom:20px">${info.desc}</p>
+    <div style="background:var(--light-bg);border-radius:12px;padding:16px;margin-bottom:16px">
+      <p style="font-size:13px;font-weight:700;color:#555;margin-bottom:10px">✨ 核心亮点</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">${info.highlights.map(h=>`<span style="background:#fff;border:1px solid #e0e0e0;padding:5px 12px;border-radius:12px;font-size:13px">${h}</span>`).join('')}</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      <div style="flex:1;background:rgba(0,168,107,0.05);border:1px solid rgba(0,168,107,0.2);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:12px;color:#888;margin-bottom:4px">最佳旅游时间</div>
+        <div style="font-size:14px;font-weight:700;color:var(--primary)">${info.best}</div>
+      </div>
+      <div style="flex:1;background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.2);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:12px;color:#888;margin-bottom:4px">参考价格</div>
+        <div style="font-size:14px;font-weight:700;color:var(--secondary)">${info.from}</div>
+      </div>
+    </div>
+    <button class="search-btn-large" onclick="closeModal();openChat();setTimeout(()=>processUserMessage('我想去${city}旅游，帮我规划行程'),300)">🤖 AI定制${city}行程</button>`;
+  showModal(html);
+}
+
+// ===== MODAL =====
+function showModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(e) {
+  if(!e || e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+}
+
+// ===== SCROLL =====
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.addEventListener('scroll', () => {
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  const prog = (window.scrollY / total) * 100;
+  document.getElementById('scrollProgress').style.width = prog + '%';
+});
+
+// ===== SEARCH =====
+function doSearch() {
+  const q = document.getElementById('heroSearch').value.trim();
+  openChat();
+  setTimeout(() => processUserMessage(q || '帮我规划澳洲旅游行程'), 300);
+}
+document.getElementById('heroSearch').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
+
+// ===== INIT =====
+renderFood('all');
+</script>
+</body>
+</html>
